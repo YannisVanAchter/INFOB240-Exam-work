@@ -1,6 +1,6 @@
 # encoding uft-8
 from random import randint
-class Square:
+class Square(object):
     """
         Structure representing one square of the sudoku
     """
@@ -24,7 +24,7 @@ class Square:
             When the square is call like this:
             Square(a, b, c, d, e, f, g, h, i)
             
-            When you pass arguments on call the data will be update like the shema above:
+            The data will be update like this on the call above:
             [[a, b, c],
             [d, e, f],
             [g, h, i]]
@@ -64,17 +64,57 @@ class Square:
     def __str__(self):
         return str(self._square)
     
+    def get_line(self, line_id: int) -> (tuple[int]):
+        """return a list of elements in the line a given line id
+
+        Args:
+            self (Square): instance of element square
+            line_id (int): line id to return
+
+        Raises:
+            ValueError: if line_id is not between 0 and 2
+
+        Returns:
+            (tuple): tuple of three elements which represents the value of the line asked 
+        """
+        if 0 <= line_id <= 2:
+            return tuple(self._square[line_id])
+        
+        raise ValueError("The value of line_id must be between 0 and 2")
+    
+    def get_column(self, column_id: int) -> (tuple[int]):
+        """return a list of elements in the line a given line id
+
+        Args:
+            self (Square): instance of element square
+            column (int): column id to return
+
+        Raises:
+            ValueError: if line_id is not between 0 and 2
+
+        Returns:
+            (tuple): tuple of three elements which represents the value of the column asked 
+        """
+        if not 0 <= column_id <= 2:
+            raise ValueError("The value of column_id must be between 0 and 2")
+        
+        column = []
+        for line in self._square:
+            column.append(line[column_id])
+            
+        return tuple(column)
+    
     @property
     def square(self):
         return self._square
     
-    def check_square_line(self, line: int, value: int) -> (bool):
+    def check_square_line(self, line_id: int, value: int) -> (bool):
         """Check if the square contain the value in the line
         
         Parameters:
         -----------
             self (Square): square object to check.
-            line (int): line number where to check if the value is in or not.
+            line_id (int): line number where to check if the value is in or not.
             value (int): value to check in the passed line.
         
         Return:
@@ -84,18 +124,18 @@ class Square:
         """
         if value < 0 or value > 9:
             raise ValueError("value must be between 0 and 9")
-        if line < 0 or line > 2:
+        if line_id < 0 or line_id > 2:
             raise ValueError("line must be between 0 and 2")
         
-        return value in self._square[line]
+        return value in self._square[line_id]
     
-    def check_square_column(self, column: int, value: int) -> (bool):
+    def check_square_column(self, column_id: int, value: int) -> (bool):
         """Check if the square contain the value in the line
         
         Parameters:
         -----------
             self (Square): square object to check.
-            column (int): column number where to check if the value is in or not.
+            column_id (int): column number where to check if the value is in or not.
             value (int): value to check in the passed line.
         
         Return:
@@ -105,10 +145,10 @@ class Square:
         """
         if value < 0 or value > 9:
             raise ValueError("value must be between 0 and 9")
-        if column < 0 or column > 2:
+        if column_id < 0 or column_id > 2:
             raise ValueError("line must be between 0 and 2")
         
         for line in range(3):
-            if value == self._square[line][column]:
+            if value == self._square[line][column_id]:
                 return True
         return False
