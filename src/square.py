@@ -1,10 +1,35 @@
 # encoding uft-8
-
+from random import randint
 class Square:
     """
         Structure representing one square of the sudoku
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: int):
+        """Create one square of sudoku.
+
+        When the square is created, there is no check of the other 
+        
+        Parameters:
+        -----------
+            args (list[int]): list of 9 element wich must contain [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]. 
+                              The only thing wich can change is the order of the example.
+
+        Raises:
+        -------
+            ValueError: args contain values under 0 or upper than 9.
+            ValueError: args contain at least one duplicate.
+            
+        Notes: 
+        ------
+            When the square is call like this:
+            Square(a, b, c, d, e, f, g, h, i)
+            
+            When you pass arguments on call the data will be update like the shema above:
+            [[a, b, c],
+            [d, e, f],
+            [g, h, i]]
+            
+        """
         self._square: list = []
         used: list = []
         if len(args) == 0:
@@ -17,7 +42,7 @@ class Square:
                             self.square[line].append(to_add)
                             used.append(to_add)
                             
-        else:
+        elif len(args) == 9:
             for i in args:
                 if i not in used and 0 <= i <= 9:
                     used.append(i)
@@ -33,6 +58,8 @@ class Square:
                 self._square[0].append(args[element])
                 self._square[1].append(args[element + 1])
                 self._square[2].append(args[element + 2])
+        else:
+            raise ValueError("The number of arguments is 9 no more no less")
                 
     def __str__(self):
         return str(self._square)
