@@ -108,22 +108,14 @@ hard = [[1,0,0, 0,0,7, 0,9,0],
         [0,4,0, 0,0,0, 0,0,7],
         [0,0,7, 0,0,0, 3,0,0]]
 
-def get_column(index, grid):
+def get_column(column, row, grid):
     to_return = []
-    for i in range(9):
-        for j in range(9):
-            if j == index:
-                to_return.append(grid[i][j])
+    for r in range(9):
+        for c in range(9):
+            if c == column and r != row :
+                to_return.append(grid[r][c])
             
     return to_return
-    
-def count_element(element, row):
-    quantity = 0
-    for i in row:
-        if i == element:
-            quantity += 1
-    
-    return quantity
 
 def check_sudoku(grid):
     if not isinstance(grid, list) and len(grid) != 9: 
@@ -133,22 +125,24 @@ def check_sudoku(grid):
     for row in grid:
         if not isinstance(row, list) or len(row) != 9:
             return None
-        d = set()
+        d = set() # make sure there is only on occurence of each element
         for element in row:
-            if not 0 <= element <= 9: # or element in d:
+            if not 0 <= element <= 9:
                 return None
+            if element in d:
+                return False
             d.add(element)
     
     # general test on each column
     for row in grid:
-        for element, id in enumerate(row):
-            if element != 0 and element in get_column(id, grid):
+        for id, element in enumerate(row):
+            if element != 0 and element in get_column(id, row, grid):
                 return False
     
     # general test on sub-grid 3x3
     for row_id in range(0, 9, 3):
         for column_id in range(0, 9, 3):
-            d = set()
+            d = {}
             sub_grid = [[], [], []]
             for i in range(3):
                 for j in range(3):
@@ -158,13 +152,14 @@ def check_sudoku(grid):
                 for value in row:
                     if value != 0 and value in d:
                         return False
-                    d.add(value)
+                    d[value] = 1
                 
     return True
 
-print( check_sudoku(ill_formed) )# --> None
-print( check_sudoku(valid)      )# --> True
-print( check_sudoku(invalid)   ) # --> False
-print( check_sudoku(easy) )      # --> True
-print(check_sudoku(hard)  )     # --> True
+if __name__ == "__main__":
+    print("None is", check_sudoku(ill_formed))  # --> None
+    print("True is", check_sudoku(valid))       # --> True
+    print("False is", check_sudoku(invalid))    # --> False
+    print("True is", check_sudoku(easy))        # --> True
+    print("True is", check_sudoku(hard))        # --> True
 
