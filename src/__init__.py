@@ -1,2 +1,0 @@
-from .square import Square
-
