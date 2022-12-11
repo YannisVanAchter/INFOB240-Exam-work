@@ -2,8 +2,33 @@
 
 import math
 
-def check_sudoku(grid, size):
-    if not isinstance(grid, list) and len(grid) != 9:
+def check_sudoku(grid, size=None):
+    """check if sudoku grid is completely feasible
+
+    If the grid is not feasible it return False of None
+
+    Parameters:
+    -----------
+        grid (list[list[int]]): list of each row containing an int between 0 and size include
+        size (int): size of sudoku grid
+
+    Raises:
+    -------
+        TypeError: if size is not an integer
+        ValueError: if size in minus or equal to 3
+        ValueError: size is not a perfect square
+
+    Return:
+    -------
+        NoneType: If grid/row len is different than the size given
+        
+        Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column
+                  True: If this is an valid sudoku grid
+    """
+    if size is None:
+        size = len(grid)
+        
+    if not isinstance(grid, list) and len(grid) != size:
         return None
     
     if not isinstance(size, int):
