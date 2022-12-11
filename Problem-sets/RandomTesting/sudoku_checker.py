@@ -148,23 +148,12 @@ def check_sudoku(grid):
             d.add(element)
 
     # general test on each column
-    column = {
-        0: [],
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: [],
-        6: [],
-        7: [],
-        8: [],
-        9: [],
-    }
+    column = { i: [] for i in range(9) }
     for row in grid:
         for id, element in enumerate(row):
-            if element != 0 and element in column[id + 1]:
+            if element != 0 and element in column[id]:
                 return False
-            column[id + 1].append(element)
+            column[id].append(element)
 
     # general test on sub-grid 3x3
     for row_id in range(0, 9, 3):
