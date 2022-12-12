@@ -2,7 +2,7 @@ import copy
 from .checker import check_sudoku
 
 
-def solve_sudoku(__grid):
+def solve_sudoku(__grid: list) -> (list or False):
     """solve sudoku
 
     solve sudoky by trying each posibility until it is finish

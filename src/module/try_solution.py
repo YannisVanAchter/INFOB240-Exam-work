@@ -4,7 +4,7 @@ import copy
 from .checker import check_sudoku
 from .solver import solve_sudoku
 
-def try_solution(_grid: list, row: int, column: int, solution: int):
+def try_solution(_grid: list, row: int, column: int, solution: int) -> (list[list[int]] or False):
     """try solution in grid
 
     Parameters:

@@ -2,22 +2,46 @@
 
 import math
 
-def print_sudoku(grid):
+def print_sudoku(grid: list) -> (None):
+    """Print sudoku grid
+
+    The sudoku will follow this parten
+    +-------++-------++-------+ 
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    +-------++-------++-------+ 
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    +-------++-------++-------+ 
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    | X X X || X X X || X X X |
+    +-------++-------++-------+ 
+
+    Parameters:
+    -----------
+        grid (list): grid
+    """
     if type(grid) != list:
         print(grid)
         return
+    
     size = int(math.sqrt(len(grid)))
     for row_id, row in enumerate(grid):
-        
+        # separators row
         if row_id in (i*size for i in range(size)):
             print(("+" + ("-" * (size * 2 + 1) + "+") )* size, end="\n| ")
         else: 
             print('|', end=" ")
+        # print element
         for column_id, column in enumerate(row):
             if column_id in (i*size for i in range(1, size)):
                 print("||", end=" ")
             print(column, end=' ')
-        print("| ")
+        
+        print("| ") # next line
     print(("+" + ("-" * (size * 2 + 1) + "+") )* size)
     
 if __name__ == "__main__":

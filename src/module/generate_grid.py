@@ -2,7 +2,7 @@
 
 import math
 
-def generate_grid(size=None):   
+def generate_grid(size: int = None) -> (list[list[0]]):   
     """ Generate empty grid 
     
     Parameters:
@@ -31,14 +31,8 @@ def generate_grid(size=None):
         if int(math.sqrt(size) // 1) != math.sqrt(size): # this is not a perfect square
             raise ValueError("size must be greater an perfect square in this sudoku game")
     
-    # generate blank grid 
-    grid = []
-    for i in range(size):
-        grid.append([])
-        for _ in range(size):
-            grid[i].append(0)
-    
-    return grid
+    # generate blank grid and return
+    return [ [0 for _ in range(size)] for _ in range(size)]
             
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 import math
 
-def check_sudoku(grid, size=None):
+def check_sudoku(grid: list, size: int=None) -> (None or bool):
     """check if sudoku grid is completely feasible
 
     If the grid is not feasible it return False of None
