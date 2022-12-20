@@ -9,67 +9,43 @@ import os.path as pt
 from cs50 import get_int
 
 def fuzzer(app: str, nb_tests: int, fuzz_output: str, file_list: list, factor: int):
-    for file_id, file in enumerate(file_list):
-        for test_id in range(nb_tests):
-            print((file_id + test_id), "on", nb_tests * len(file_list), "this means we are at", ((test_id + file_id) /(nb_tests* len(file_list))) * 100, "%")
-            # generate list of each bytes composing the file
-            f = open(file, "rb")
-            buffer_ = bytearray(f.read())
-            f.close()
+    for test_id in range(nb_tests):
+        file = random.choice(file_list)
+        print((test_id), "on", nb_tests , "this means we are at", (test_id /nb_tests) * 100, "%")
+        # generate list of each bytes composing the file
+        f = open(file, "rb")
+        buffer_ = bytearray(f.read())
+        f.close()
+        
+        nb_writtings = random.randrange(math.ceil((float(len(buffer_)) / factor ))) + 1
+        
+        for _ in range(nb_writtings):
+            rbyte = random.randrange(256)
+            byte_id = random.choice(buffer_)
+            buffer_[byte_id] = rbyte
             
-            nb_writtings = random.randrange(math.ceil((float(len(buffer_)) / factor ))) + 1
+        open(fuzz_output, "wb").write(buffer_)
             
-            for _ in range(nb_writtings):
-                rbyte = random.randrange(256)
-                byte_id = random.choice(buffer_)
-                buffer_[byte_id] = rbyte
-                
-            with open(fuzz_output, "wb") as f:
-                f.write(buffer_)
-            
-                process = subprocess.Popen([app, fuzz_output])
-                
-                time.sleep(0.001)
-                
-                crash = process.poll()
-                
-                if not crash:
-                    process.terminate()
-                else:
-                    yield buffer_, file, test_id
-  
-def get_argv():
-    from sys import argv 
-    def get_file_list(start: int):
-        if argv.__len__() == start + 1 and argv[start].startswith("-"):
-            f = open(argv[start][1:], "r")
-            arguments_ = f.readlines()
-            f.close()
+        process = subprocess.Popen([app, fuzz_output])
+        # process = subprocess.Popen([app, buffer_])
+        # process = subprocess.Popen(buffer_, len(buffer_), app)
+        
+        time.sleep(0.001)
+        
+        crash = process.poll()
+        
+        if not crash:
+            process.terminate()
         else:
-            arguments_ = argv[start:]
-        file_list = []
-        for file_path in arguments_:
-            if pt.isfile(file_path):
-                file_list.append(file_path)
-        
-        if len(file_list) == 0:
-            exit("You did not enter any file for tests")
-        return file_list
-            
-    if len(argv) == 1:
-        exit("You did not enter an factor or an list of file for tests")
-    
-    try:
-        factor = int(argv[1])
-        file_list = get_file_list(2)
-    except ValueError:
-        factor = get_int("Enter the factor you want for fuzzing: ")
-        file_list = get_file_list(1)
-        
-    return factor, file_list
+            yield buffer_, file, test_id
+
 
 def main(): 
-    apps = ["C:\\Users\\yanni\\OneDrive\\Bureau\\ALL\\Tor Browser\\Browser\\firefox.exe"]
+    apps = [
+            "C:\\Program Files\\paint.net\\paintdotnet.exe",
+            "C:\\Program Files\\GIMP 2\\bin\\gimp-2.10.exe",
+            "C:\\Users\\yanni\\OneDrive\\Bureau\\ALL\\Tor Browser\\Browser\\firefox.exe",
+            ]
     # ["C:\\Users\\yanni\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DB-Main 11.0.2\\DB-Main 11.0.2.lnk"]
     factor, file_list_name = 250, [
         "C:\\Users\\yanni\\OneDrive\\Documents\\unif\\Bac 2\\Q1\\MOOC\\image_présentation\\istockphoto-451623157-612x612.jpg",
@@ -85,9 +61,9 @@ def main():
         "C:\\Users\\yanni\\OneDrive\\Documents\\unif\\Bac 2\\Q1\\MOOC\\image_présentation\\Dragons_Battles_Knight_446264.jpg",
         "C:\\Users\\yanni\\OneDrive\\Documents\\unif\\Bac 2\\Q1\\MOOC\\image_présentation\\Dragons_Battles_Knight_446264_meme.jpg"
     ]
+    nb_tests = random.randint(1000, 10000)
     with open("fuzzer_repporting.txt", "w+") as file:
         for app in apps:
-            nb_tests = random.randint(10000, 100000)
             for crasher_data, file_name, test_id_crash in fuzzer(app, nb_tests, "temp.fuzzer.out.subprocessData.txt", file_list_name, factor):
                 to_insert = f"""\n
                 On test of {app}:\n
