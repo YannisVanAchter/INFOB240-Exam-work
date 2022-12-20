@@ -11,7 +11,7 @@ from cs50 import get_int
 def fuzzer(app: str, nb_tests: int, fuzz_output: str, file_list: list, factor: int):
     for test_id in range(nb_tests):
         file = random.choice(file_list)
-        print((test_id), "on", nb_tests , "this means we are at", (test_id /nb_tests) * 100, "%")
+        print(test_id, "on", nb_tests , "this means we are at", (test_id /nb_tests) * 100, "%")
         # generate list of each bytes composing the file
         f = open(file, "rb")
         buffer_ = bytearray(f.read())
