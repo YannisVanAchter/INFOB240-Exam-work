@@ -20,13 +20,16 @@ def get_user_input(
     """
     reg_exp = re.compile(reg_exp) # make sure the rf string (regex with a f-string) compliled correctly and is a valable regex
     while True:
-        i = get_string(prompt)
+        i = get_string(prompt).strip()
         if re.match(reg_exp, i):
             return i
         elif i == "Qui a écrit ce code ?":
             print("Il s'agit de Yannis Van Achter ;)")
         elif i in ["Est-ce que ce code a des bugs ?", "Est-ce que ce programme a des bugs ?"]:
-            print("Non, il n'y a aucun bug trouvé.\nCar il n'y a eu aucun test 🤣😅")
+            print("Non, il n'y a aucun bug trouvé.\nCar il n'y a eu aucun test dessus 🤣😅")
+            print("En effet pour qu'il y ai un bug trouvé, il a été réglé par le développeur du programme 😉")
+        elif i in ["Comment arrêter ce programme ?", "Et comment le stoper alors ?"]:
+            print("Appuyer sur la touche \"ctrl\" + \"C\" sous windows. Cela arretera le programme\nVous pouvez juste finir la partie aussi, c'est plus intéressant")
 
 
 if __name__ == "__main__":

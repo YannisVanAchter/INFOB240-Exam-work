@@ -28,12 +28,12 @@ def generate_grid(size: int = None) -> (list[list[0]]):
             raise TypeError("size must be an integer")
         if size <= 3:
             raise ValueError("size must be greater than 3")
-        if int(math.sqrt(size) // 1) != math.sqrt(size): # this is not a perfect square
+        if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square
             raise ValueError("size must be greater an perfect square in this sudoku game")
     
     # generate blank grid and return
     return [ [0 for _ in range(size)] for _ in range(size)]
-            
+    
 
 if __name__ == "__main__":
     from print_sudoku import print_sudoku

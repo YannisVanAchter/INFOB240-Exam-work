@@ -5,7 +5,10 @@ import copy
 import random as rd
 
 # personal module
-from .checker import check_sudoku
+try:
+    from .checker import check_sudoku
+except:
+    from checker import check_sudoku
 
 def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list[list[int]]):
     """place randomly value in grid

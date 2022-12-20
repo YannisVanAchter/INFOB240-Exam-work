@@ -5,20 +5,20 @@ import math
 def print_sudoku(grid: list) -> (None):
     """Print sudoku grid
 
-    The sudoku will follow this parten
-    +-------++-------++-------+ 
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    +-------++-------++-------+ 
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    +-------++-------++-------+ 
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    | X X X || X X X || X X X |
-    +-------++-------++-------+ 
+    The sudoku will follow this parten\n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
 
     Parameters:
     -----------

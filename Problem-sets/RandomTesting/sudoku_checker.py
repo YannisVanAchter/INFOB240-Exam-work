@@ -134,11 +134,12 @@ def check_sudoku(grid):
         return None
 
     # general testing on each row
+    column = { i: [] for i in range(9) } # for test on column
     for row in grid:
         if not isinstance(row, list) or len(row) != 9:
             return None
-        d = set()  # make sure there is only on occurence of each element
-        for element in row:
+        d = set()  # make sure there is only on occurence of each element by using a set object
+        for id, element in enumerate(row):
             if not isinstance(element, int):
                 return None
             if not 0 <= element <= 9:
@@ -146,11 +147,8 @@ def check_sudoku(grid):
             if element != 0 and element in d:
                 return False
             d.add(element)
-
-    # general test on each column
-    column = { i: [] for i in range(9) }
-    for row in grid:
-        for id, element in enumerate(row):
+            
+            # test column
             if element != 0 and element in column[id]:
                 return False
             column[id].append(element)

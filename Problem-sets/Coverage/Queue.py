@@ -100,7 +100,7 @@ def test():
     assert r == value_2
 
 
-    print "All test passed"
+    print ("All test passed")
 
 test()
 

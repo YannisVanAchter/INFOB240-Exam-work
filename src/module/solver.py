@@ -1,6 +1,8 @@
 import copy
-from .checker import check_sudoku
-
+try:
+    from .checker import check_sudoku
+except:
+    from checker import check_sudoku
 
 def solve_sudoku(__grid: list) -> (list or False):
     """solve sudoku
@@ -15,7 +17,7 @@ def solve_sudoku(__grid: list) -> (list or False):
         NoneType: if the grid format is unvalable
         list: solved grid otherwise
     """
-    r = check_sudoku(__grid)
+    r = check_sudoku(__grid, len(__grid))
     if r == None or r == False:
         return r
 
@@ -38,6 +40,7 @@ def solve_sudoku(__grid: list) -> (list or False):
 
 def _test(grid, expected):
     r = solve_sudoku(grid)
+    print(r)
     assert r == expected, f"check_sudoku should return {expected}\n\t\tIn stead of {r}"
 
 
@@ -190,16 +193,46 @@ if __name__ == "__main__":
                 [9, 7, 8, 5, 3, 1, 6, 4, 2]
             ],
         ),
+        (
+            [
+                [2,4, 3,0],
+                [1,0, 0,2],
+                #---------
+                [3,0, 0,0],
+                [0,0, 0,0],
+            ],
+            [
+                [2,4, 3,1],
+                [1,3, 4,2], 
+                # -----------
+                [3,1, 2,4], 
+                [4,2, 1,3]
+            ],
+        )
     ]
-    for expected, grid in data_test:
-        _test(grid, expected)
-    print("All tests passed")
-    
-    from generate_grid import generate_grid
-    from print_sudoku import print_sudoku
-    grid = generate_grid(9)
-    print(grid)
-    print_sudoku(grid)
-    grid = solve_sudoku(grid)
-    print(grid)
-    print_sudoku(grid)
+    # for expected, grid in data_test:
+    #     _test(grid, expected)
+    # print("All tests passed")
+    a = [
+                [1,0,0,11, 2,0,0,10, 5,0,0,16, 0,0,0,0,],
+                [0,4,0,10, 0,5,0,11, 0,15,0,0, 0,0,0,0,],
+                [0,0,15,0, 0,0,14,0, 0,11,0,0, 0,0,0,0,],
+                [0,0,0,16, 0,0,0,13, 0,10,0,0, 0,0,0,0,],
+                # ---------------------------------------
+                [0,0,0,0, 10,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,15,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,9,16, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,11,0, 0,0,0,0, 0,0,0,0,],
+                # ---------------------------------------
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                # ---------------------------------------
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
+           ]
+    print(solve_sudoku(a))
+
