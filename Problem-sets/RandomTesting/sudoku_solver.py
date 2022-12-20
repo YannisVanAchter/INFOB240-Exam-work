@@ -83,7 +83,7 @@ def solve_sudoku(grid_):
                     new = solve_sudoku(grid)
                     if new != False and new != None: 
                         return new # final return
-                return False # if there is a zero but no value to replace we go to mother call
+                return False # if there is a zero but no value to replace we go to mother call to pass for pevious value at next one (From 1 to 2 for instance)
     
     # If no zero in grid
     return grid
@@ -92,8 +92,8 @@ def __main__(self, name):
     import time
 
     print(f"{name} : ")
-    start = time.time()
     print_sudoku(self)
+    start = time.time()
     print_sudoku(solve_sudoku(self))
     end = time.time()
     delta = end - start
