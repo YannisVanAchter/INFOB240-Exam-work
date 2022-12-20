@@ -65,15 +65,15 @@ def print_sudoku(grid):
         print()
     print("=" * 24)
     
-def solve_sudoku(__grid):
+def solve_sudoku(grid_):
     import copy
     from sudoku_checker import check_sudoku
     
-    r = check_sudoku(__grid)
+    r = check_sudoku(grid_)
     if r == None or r == False:
         return  r
     
-    grid = copy.deepcopy(__grid)
+    grid = copy.deepcopy(grid_)
     
     for row in range(9):
         for column in range(9):
