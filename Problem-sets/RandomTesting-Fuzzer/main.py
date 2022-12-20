@@ -27,8 +27,6 @@ def fuzzer(app: str, nb_tests: int, fuzz_output: str, file_list: list, factor: i
         open(fuzz_output, "wb").write(buffer_)
             
         process = subprocess.Popen([app, fuzz_output])
-        # process = subprocess.Popen([app, buffer_])
-        # process = subprocess.Popen(buffer_, len(buffer_), app)
         
         time.sleep(0.001)
         
