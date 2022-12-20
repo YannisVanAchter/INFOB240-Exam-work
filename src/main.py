@@ -1,11 +1,11 @@
 # encoding uft-8
 
 # import modules
-import sys
 import os
 import ast
 import time
 import math
+import copy
 
 # venv modules
 from cs50 import get_int, get_string
@@ -89,7 +89,7 @@ def main():
             else:
                 print("Great, you are on an good way")
                 to_find -= 1
-                grid = try_s
+                grid = copy.deepcopy(try_s)
             
             time.sleep(0.5)
             
