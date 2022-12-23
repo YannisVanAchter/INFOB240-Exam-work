@@ -13,17 +13,20 @@ except:
 def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list[list[int]]):
     """place randomly value in grid
 
-    Args:
+    Parameters:
+    -----------
         __grid (list): grid where insert value
         size (int): size of grid
         n_discover (int): n° of value to discover. Default to an random number between 1 and 3 time the size
 
     Raises:
+    -------
         TypeError: n_discover is not an int
         ValueError: n_discover is negative
         ValueError: n_discover is greater than the maximum element of the grid
 
-    Returns:
+    Return:
+    -------
         grid (list): updated grid with random value
     """
     if n_discover is None:
@@ -42,7 +45,7 @@ def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list
 
     grid = copy.deepcopy(__grid)
     
-    if n_discover == size ** 2:
+    if n_discover >= size ** 2:
         from solver import solve_sudoku
         return solve_sudoku(grid)
     

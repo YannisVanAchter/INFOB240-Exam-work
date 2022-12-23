@@ -1,13 +1,15 @@
 # encoding uft-8
 
+# import repertory to test
+import sys
+sys.path.append("..")
+from src.module import *
+
 # import
 import unittest
-try:
-    from ..src.module import *
-except:
-    from src.module import *
+import random
 
-class Test(unittest.TestCase):
+class TestModule(unittest.TestCase):
     def setUp(self):
         self.Data = [
         # 0. check_sudoku should return None
@@ -171,7 +173,7 @@ class Test(unittest.TestCase):
                 [9, 7, 8, 5, 3, 1, 6, 4, 2]
             ],
             9,
-        )
+        ),
         
         # 5. 
         (
@@ -305,14 +307,54 @@ class Test(unittest.TestCase):
     ]
     
     def TestCheckSudoku(self):
-        for expected, grid, solved_grid, size in self.Data:
-            assert expected == check_sudoku(grid, size)
-            
-    def TestSolveSudoku(self):
-        for _, grid, expected, size in self.Data:
-            assert expected == solve_sudoku(grid)
-        
-   
+        print('Test check_sudoku')
+        for expected, grid, _, size in self.Data:
+            return_ = check_sudoku(grid, size)
+            self.assertEqual(expected, return_, f"We expected {expected}\nNot {return_}")
     
+    def TestSolveSudoku(self):
+        print("Test solve_sudoku")
+        for _, grid, expected, _ in self.Data:
+            return_ = solve_sudoku(grid)
+            self.assertEqual(expected, return_, f"We expected {expected}\nNot {return_}")
+    
+    def TestPlaceRandomValue(self):
+        print('Test place_random_value()')
+        n_tests = 30
+        perfect_square_number_list = [i * i for i in range(n_tests + 1)]
+        seed_random_test = None # random.seed  # HOWTO GET THE SEED ?
+        with open("./TestPlaceRandomValue_return.txt") as file:
+            file.write(f"Current seed: {seed_random_test}\n")
+            for test_id in range(n_tests):
+                size = random.randint(4, test_id**2)
+                if size in perfect_square_number_list:
+                    empty_grid = generate_grid(size)
+                    discoverd = random.randint(1, size**2)
+                    if discoverd >= size**2 or discoverd < 0:
+                        self.assertRaises(
+                            ValueError, place_random_value, empty_grid, size, discoverd
+                        )
+                    else:
+                        randomly_placed_grid = place_random_value(
+                            empty_grid, size, discoverd
+                        )
+                        count = 0
+                        for row in randomly_placed_grid:
+                            for column in row:
+                                if column != 0:
+                                    count += 1
+                        try:
+                            assert (
+                                count == discoverd
+                            ), "Check function place random value placed {discoverd} but this is not the case.\n\t\tThe is only {count}"
+                        except AssertionError as e:
+                            file.write(
+                                f"AssertionError: {e}\nExpected a count of: {discoverd}\nGet: {count}\n"
+                                + ("=" * 20)
+                                + "\n"
+                            )
+                else:
+                    self.assertRaises(ValueError, generate_grid, size)
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,12 +1,5 @@
-# encoding uft-8
 
-# import
-import unittest
-from src.module import *
-
-class Test(unittest.TestCase):
-    def setUp(self):
-        self.Data = [
+data = [
         # 0. check_sudoku should return None
         (
             None, 
@@ -168,7 +161,7 @@ class Test(unittest.TestCase):
                 [9, 7, 8, 5, 3, 1, 6, 4, 2]
             ],
             9,
-        )
+        ),
         
         # 5. 
         (
@@ -300,16 +293,3 @@ class Test(unittest.TestCase):
             16,
         ),
     ]
-    
-    def TestCheckSudoku(self):
-        for expected, grid, solved_grid, size in self.Data:
-            assert expected == check_sudoku(grid, size)
-            
-    def TestSolveSudoku(self):
-        for _, grid, expected, size in self.Data:
-            assert expected == solve_sudoku(grid)
-        
-   
-    
-# if __name__ == "__main__":
-unittest.main()

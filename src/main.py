@@ -17,11 +17,11 @@ from module.generate_grid import generate_grid
 from module.get_user_input import get_user_input
 from module.try_solution import try_solution
 
-def get_grid_size(n_party: int) -> (int):
+def get_grid_size() -> (int):
     """Get grid size user want for his game
 
-    Returns:
-    --------
+    Return:
+    -------
         int: positive value greater than 4
     """
     while True:
@@ -40,11 +40,13 @@ def get_input(grid, size) -> (dict[str, int]):
 
     Clear console, print grid and ask user for their choice of case to unlock
 
-    Args:
+    Parameters:
+    -----------
         grid (list): grid of sudoku
         size (int): size of sudoku
 
-    Returns:
+    Return:
+    -------
         dict: {
                 "row": 0 <= int < size, 
                 "column": 0 <= int < size,
@@ -54,7 +56,7 @@ def get_input(grid, size) -> (dict[str, int]):
     clear_console()
     print_sudoku(grid)
     while True:
-        # Have to pace two curlet braces to add one by the f-string and the n° of number we want for the reg exp
+        # Have to pace two curlets braces ("{}") to add one by the f-string and the n° of number we want for the reg exp
         i = get_user_input(reg_exp = fr"\([1-{size}]{{1}}, [1-{size}]{{1}}\): [1-{size}]{{1}}") 
         i = i.split(":")
         try:
@@ -91,7 +93,7 @@ def main():
                 to_find -= 1
                 grid = copy.deepcopy(try_s)
             
-            time.sleep(0.5)
+            time.sleep(1)
             
         quit: str = get_string("Do you want quit the game ?\n(Y/N) ")
         if quit != None and quit.lower().startswith(("y", "q")):
