@@ -143,7 +143,7 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
     -------
         NoneType: If grid/row len is different than the size given
         
-        Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column
+        Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column OR element at least 2 time in the same sub-grid
                   True: If this is an valid sudoku grid
     """
     if not isinstance(grid, list):
@@ -159,16 +159,19 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
         raise ValueError(f"size must be greater than 3\n\tNo {size}")
     
     # apply this condition to make us able to represent correctly the grid (this is more buityfull)
-    if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square
-        raise ValueError("size must be greater than 6 in this sudoku game")
+    if int(math.sqrt(size)) != size**0.5: # this is not a perfect square
+        raise ValueError(f"size must be a perfect square\n\tCurrent size: {size}")
         
     if len(grid) != size:
         return None
 
-    # general testing on each row
-    column = { i: [] for i in range(size) } # for test on column
+    # general testing on each row and column
+    column = [ [] for i in range(size) ]
     for row in grid:
-        if (not isinstance(row, list)) or (len(row) != size):
+        if (not isinstance(row, list)):
+            return None
+        
+        if (len(row) != size):
             return None
         
         for id, element in enumerate(row):
@@ -176,7 +179,6 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
                 return None
             
             if 0 > element or element > size:
-                print("Bad size")
                 return False
             
             if element != 0:
@@ -185,12 +187,12 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
                     return False
                 
                 # test on column
-                is_unique_in_column = element in column[id]
-                if is_unique_in_column :
+                is_unique_in_column = element not in column[id] # if this is unique there is not yet the element in the dict
+                if not is_unique_in_column :
                     return False
                 column[id].append(element)
 
-    # general test on sub-grid 3x3
+    # general test on sub-grid of size equal to: int(size**0.5)
     jump = int(math.sqrt(size))
     for row_id in range(0, size, jump):
         for column_id in range(0, size, jump):
