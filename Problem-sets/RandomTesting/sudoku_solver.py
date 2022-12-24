@@ -13,7 +13,7 @@
 # partially-completed Sudoku grid does not have a unique solution. You
 # should just return some member of the set of solutions.
 #
-# A solve_sudoku() in this style can be implemented in about 16 lines
+# A solve_sudoku() in this style can be implemented in about **__16 lines__** => Recursion ?
 # without making any particular effort to write concise code.
 
 # solve_sudoku should return a 
@@ -51,31 +51,63 @@ hard = [[1,0,0, 0,0,7, 0,9,0],
         [0,4,0, 0,0,0, 0,0,7],
         [0,0,7, 0,0,0, 3,0,0]]
 
-def print_sudoku(grid):
+def print_sudoku(grid: list) -> (None):
+    """Print sudoku grid
+
+    The sudoku will follow this parten\n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+
+    Parameters:
+    -----------
+        grid (list): grid
+    """
+    import math
+    
     if type(grid) != list:
         print(grid)
         return
+    
+    size = int(math.sqrt(len(grid)))
     for row_id, row in enumerate(grid):
-        if row_id in (0, 3, 6):
-            print("=" * 24)
+        # separators row
+        if row_id in (i*size for i in range(size)):
+            print(("+" + ("-" * (size * 2 + 1) + "+") )* size, end="\n| ")
+        else: 
+            print('|', end=" ")
+        # print element
         for column_id, column in enumerate(row):
-            if column_id in (3, 6):
+            if column_id in (i*size for i in range(1, size)):
                 print("||", end=" ")
             print(column, end=' ')
-        print()
-    print("=" * 24)
+        
+        print("| ") # next line
+    print(("+" + ("-" * (size * 2 + 1) + "+") )* size)
     
 def solve_sudoku(__grid: list) -> (list or False):
     """solve sudoku
 
     solve sudoky by trying each posibility until it is finish
 
-    Args:
+    Parameters:
+    -----------
         __grid (list): grid to solve
 
-    Returns:
-        bool: False id the grid is not solvable
-        NoneType: if the grid format is unvalable
+    Return:
+    -------
+        bool: False id the grid is not solvable OR
+        NoneType: if the grid format is unvalable OR
         list: solved grid otherwise
     """
     from sudoku_checker import check_sudoku
@@ -95,7 +127,7 @@ def solve_sudoku(__grid: list) -> (list or False):
                     grid[row][column] = i
                     new = solve_sudoku(grid)
                     if new != False and new != None:
-                        return new  # final return
+                        return new
                 return False  # if there is a zero but no value to replace we go to mother call
 
     # If no zero in grid
