@@ -1,13 +1,11 @@
 # encoding uft-8
 
 # general import
-import time
 import unittest
 
 from data_test import data as data_for_test
-from sudoku_solver import print_sudoku
 
-# Import funtion to test
+# Import funtion under test
 from sudoku_checker import check_sudoku
 from sudoku_solver import solve_sudoku
 
@@ -39,21 +37,7 @@ class TestSudoku(unittest.TestCase):
             else:
                 r = solve_sudoku(grid_under_test)
                 self.assertEqual(r, expected, f"Assert failure\n\tData {type(grid_under_test)}: {grid_under_test}\n\tExpected {expected}: {expected}\n\tReturn {type(r)}: {r}")
-        
 
-# def main():
-#     data = data_for_test
-#     t = TestSudoku()
-#     t.setUp()
-
-#     start = time.time()
-#     t.test_check_sudoku(data)
-#     t.test_solve_sudoku(data)
-#     end = time.time()
-    
-#     total = end - start
-#     print(f"All tests passed in {total} seconds.")
 
 if __name__ == "__main__":
-    # main()
     unittest.main()
