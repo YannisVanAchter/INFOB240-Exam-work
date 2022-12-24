@@ -80,6 +80,7 @@ def test():
     assert q.empty()
     assert not q.full()
     assert None == q.dequeue()
+    q.checkRep()
     
     success = q.enqueue(value_1)
     assert success == True

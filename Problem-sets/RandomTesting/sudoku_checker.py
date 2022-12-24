@@ -75,17 +75,7 @@ valid = [
 
 # check_sudoku should return False
 invalid = [
-    [
-        5,
-        3,
-        4,
-        6,
-        7,
-        8,
-        9,
-        1,
-        2,
-    ],  # Two eight in second sub-grid (line 1: id 3 and 3: id 2)
+    [5, 3, 4, 6, 7, 8, 9, 1, 2],  # Two eight in second sub-grid (line 1: id 3 and 3: id 2)
     [6, 7, 2, 1, 9, 5, 3, 4, 8],
     [1, 9, 8, 3, 8, 2, 5, 6, 7],
     # ------------------
@@ -129,36 +119,84 @@ hard = [
 ]
 
 
-def check_sudoku(grid):
-    if not isinstance(grid, list) and len(grid) != 9:
+# encoding uft-8
+
+import math
+
+def check_sudoku(grid: list, size: int=None) -> (None or bool):
+    """check if sudoku grid is completely feasible
+
+    If the grid is not feasible it return False of None
+
+    Parameters:
+    -----------
+        grid (list[list[int]]): list of each row containing an int between 0 and size include
+        size (int): size of sudoku grid, Default on size of grid
+
+    Raises:
+    -------
+        TypeError: if size is not an integer
+        ValueError: if size in minus or equal to 3
+        ValueError: size is not a perfect square
+
+    Return:
+    -------
+        NoneType: If grid/row len is different than the size given
+        
+        Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column
+                  True: If this is an valid sudoku grid
+    """
+    if not isinstance(grid, list):
+        return None
+    
+    if size == None:
+        size = len(grid)
+        
+    if not isinstance(size, int):
+        raise TypeError("size must be an integer")
+    
+    if size <= 3:
+        raise ValueError(f"size must be greater than 3\n\tNo {size}")
+    
+    # apply this condition to make us able to represent correctly the grid (this is more buityfull)
+    if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square
+        raise ValueError("size must be greater than 6 in this sudoku game")
+        
+    if len(grid) != size:
         return None
 
     # general testing on each row
-    column = { i: [] for i in range(9) } # for test on column
+    column = { i: [] for i in range(size) } # for test on column
     for row in grid:
-        if not isinstance(row, list) or len(row) != 9:
+        if (not isinstance(row, list)) or (len(row) != size):
             return None
-        d = set()  # make sure there is only on occurence of each element by using a set object
+        
         for id, element in enumerate(row):
             if not isinstance(element, int):
                 return None
-            if not 0 <= element <= 9:
-                return False
-            if element != 0 and element in d:
-                return False
-            d.add(element)
             
-            # test column
-            if element != 0 and element in column[id]:
+            if 0 > element or element > size:
+                print("Bad size")
                 return False
-            column[id].append(element)
+            
+            if element != 0:
+                is_unique_in_row = row.count(element) == 1
+                if not is_unique_in_row :
+                    return False
+                
+                # test on column
+                is_unique_in_column = element in column[id]
+                if is_unique_in_column :
+                    return False
+                column[id].append(element)
 
     # general test on sub-grid 3x3
-    for row_id in range(0, 9, 3):
-        for column_id in range(0, 9, 3):
+    jump = int(math.sqrt(size))
+    for row_id in range(0, size, jump):
+        for column_id in range(0, size, jump):
             d = {}
-            for i in range(3):
-                for j in range(3):
+            for i in range(jump):
+                for j in range(jump):
                     value = grid[row_id + i][column_id + j]
                     if value != 0 and value in d:
                         return False

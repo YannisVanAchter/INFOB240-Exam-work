@@ -47,16 +47,20 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
         for id, element in enumerate(row):
             if not isinstance(element, int):
                 return None
+            
             if not 0 <= element <= size:
                 return False
-            if element != 0 and element in d:
-                return False
-            d.add(element)
             
-            # test on column
-            if element != 0 and element in column[id]:
-                return False
-            column[id].append(element)
+            
+            if element != 0:
+                if element in d:
+                    return False
+                d.add(element)
+                
+                # test on column
+                if element in column[id]:
+                    return False
+                column[id].append(element)
 
     # general test on sub-grid 3x3
     for row_id in range(0, size, int(math.sqrt(size))):

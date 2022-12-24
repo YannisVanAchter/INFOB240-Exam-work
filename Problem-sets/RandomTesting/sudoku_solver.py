@@ -65,26 +65,39 @@ def print_sudoku(grid):
         print()
     print("=" * 24)
     
-def solve_sudoku(grid_):
-    import copy
+def solve_sudoku(__grid: list) -> (list or False):
+    """solve sudoku
+
+    solve sudoky by trying each posibility until it is finish
+
+    Args:
+        __grid (list): grid to solve
+
+    Returns:
+        bool: False id the grid is not solvable
+        NoneType: if the grid format is unvalable
+        list: solved grid otherwise
+    """
     from sudoku_checker import check_sudoku
+    import copy
     
-    r = check_sudoku(grid_)
+    r = check_sudoku(__grid)
     if r == None or r == False:
-        return  r
-    
-    grid = copy.deepcopy(grid_)
-    
-    for row in range(9):
-        for column in range(9):
+        return r
+
+    size = len(__grid)
+    grid = copy.deepcopy(__grid)
+
+    for row in range(size):
+        for column in range(size):
             if grid[row][column] == 0:
-                for i in range(1, 10):
+                for i in range(1, size + 1):
                     grid[row][column] = i
                     new = solve_sudoku(grid)
-                    if new != False and new != None: 
-                        return new # final return
-                return False # if there is a zero but no value to replace we go to mother call to pass for pevious value at next one (From 1 to 2 for instance)
-    
+                    if new != False and new != None:
+                        return new  # final return
+                return False  # if there is a zero but no value to replace we go to mother call
+
     # If no zero in grid
     return grid
 
