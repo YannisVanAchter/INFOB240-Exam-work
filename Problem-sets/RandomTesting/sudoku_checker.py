@@ -1,3 +1,9 @@
+# encoding uft-8
+
+# this code should be run in Python 3.9 
+
+# UDACITY EXERCICE DEFINITION: 
+
 # SPECIFICATION:
 #
 # check_sudoku() determines whether its argument is a valid Sudoku
@@ -123,44 +129,25 @@ hard = [
 
 import math
 
-def check_sudoku(grid: list, size: int=None) -> (None or bool):
+def check_sudoku(grid: list) -> (None or bool):
     """check if sudoku grid is completely feasible
 
     If the grid is not feasible it return False of None
 
     Parameters:
     -----------
-        grid (list[list[int]]): list of each row containing an int between 0 and size include
-        size (int): size of sudoku grid, Default on size of grid
-
-    Raises:
-    -------
-        TypeError: if size is not an integer
-        ValueError: if size in minus or equal to 3
-        ValueError: size is not a perfect square
+        grid (list[list[int]]): list of each row containing an int between 0 and 9 include
 
     Return:
     -------
         NoneType: If grid/row len is different than the size given
         
-        Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column OR element at least 2 time in the same sub-grid
+        Bool:     False: not 0 <= element <= 9 OR element at least 2 time in the same row OR element at least 2 time in the same column OR element at least 2 time in the same sub-grid
                   True: If this is an valid sudoku grid
     """
+    size = 9
     if not isinstance(grid, list):
         return None
-    
-    if size == None:
-        size = len(grid)
-        
-    if not isinstance(size, int):
-        raise TypeError("size must be an integer")
-    
-    if size <= 3:
-        raise ValueError(f"size must be greater than 3\n\tNo {size}")
-    
-    # apply this condition to make us able to represent correctly the grid (this is more buityfull)
-    if int(math.sqrt(size)) != size**0.5: # this is not a perfect square
-        raise ValueError(f"size must be a perfect square\n\tCurrent size: {size}")
         
     if len(grid) != size:
         return None

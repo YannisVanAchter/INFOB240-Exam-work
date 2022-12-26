@@ -20,14 +20,7 @@ class TestSudoku(unittest.TestCase):
                 self.assertRaises(expected, check_sudoku, grid_under_test)
             else:
                 r = check_sudoku(grid_under_test)
-                self.assertEqual(r, expected, f"Assert failure\n\tData {type(grid_under_test)}: {grid_under_test}\n\tExpected {expected}: {expected}\n\tReturn {type(r)}: {r}")
-        
-        for _, grid_under_test, _, size, expected in self.data:
-            if expected in [ValueError, TypeError]:
-                self.assertRaises(expected, check_sudoku, grid_under_test, size)
-            else:
-                r = check_sudoku(grid_under_test, size)
-                self.assertEqual(r, expected, f"Assert failure\n\tData {type(grid_under_test)}: {grid_under_test}\n\tExpected {expected}: {expected}\n\tReturn {type(r)}: {r}")
+                self.assertEqual(r, expected, f"Assert failure\n\tData {type(grid_under_test)}: {grid_under_test}\n\tExpected {type(expected)}: {expected}\n\tReturn {type(r)}: {r}")
             
     def test_solve_sudoku(self):
         # coverage

@@ -117,7 +117,7 @@ def solve_sudoku(__grid: list) -> (list or False):
     if r == None or r == False:
         return r
 
-    size = len(__grid)
+    size = 9
     grid = copy.deepcopy(__grid)
 
     for row in range(size):
