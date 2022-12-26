@@ -145,47 +145,35 @@ def check_sudoku(grid: list) -> (None or bool):
         Bool:     False: not 0 <= element <= 9 OR element at least 2 time in the same row OR element at least 2 time in the same column OR element at least 2 time in the same sub-grid
                   True: If this is an valid sudoku grid
     """
-    size = 9
-    if not isinstance(grid, list):
-        return None
-        
-    if len(grid) != size:
+    if not isinstance(grid, list) and len(grid) != 9:
         return None
 
-    # general testing on each row and column
-    column = [ [] for i in range(size) ]
+    # general testing on each row
+    column = { i: [] for i in range(9) } # for tests on column
     for row in grid:
-        if (not isinstance(row, list)):
+        if not isinstance(row, list) or len(row) != 9:
             return None
-        
-        if (len(row) != size):
-            return None
-        
+        d = set()  # make sure there is only on occurence of each element
         for id, element in enumerate(row):
             if not isinstance(element, int):
                 return None
-            
-            if 0 > element or element > size:
+            if not 0 <= element <= 9:
                 return False
-            
-            if element != 0:
-                is_unique_in_row = row.count(element) == 1
-                if not is_unique_in_row :
+            if element != 0 :
+                if element in d:
                     return False
+                d.add(element)
                 
-                # test on column
-                is_unique_in_column = element not in column[id] # if this is unique there is not yet the element in the dict
-                if not is_unique_in_column :
+                if element in column[id]:
                     return False
                 column[id].append(element)
 
-    # general test on sub-grid of size equal to: int(size**0.5)
-    jump = int(math.sqrt(size))
-    for row_id in range(0, size, jump):
-        for column_id in range(0, size, jump):
+    # general test on sub-grid 3x3
+    for row_id in range(0, 9, 3):
+        for column_id in range(0, 9, 3):
             d = {}
-            for i in range(jump):
-                for j in range(jump):
+            for i in range(3):
+                for j in range(3):
                     value = grid[row_id + i][column_id + j]
                     if value != 0 and value in d:
                         return False

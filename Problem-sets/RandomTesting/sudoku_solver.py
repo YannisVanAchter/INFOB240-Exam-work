@@ -72,28 +72,25 @@ def print_sudoku(grid: list) -> (None):
     Parameters:
     -----------
         grid (list): grid
-    """
-    import math
-    
+    """    
     if type(grid) != list:
         print(grid)
         return
     
-    size = int(math.sqrt(len(grid)))
     for row_id, row in enumerate(grid):
         # separators row
-        if row_id in (i*size for i in range(size)):
-            print(("+" + ("-" * (size * 2 + 1) + "+") )* size, end="\n| ")
+        if row_id in (i*9 for i in range(9)):
+            print(("+" + ("-" * (9 * 2 + 1) + "+") )* 9, end="\n| ")
         else: 
             print('|', end=" ")
         # print element
         for column_id, column in enumerate(row):
-            if column_id in (i*size for i in range(1, size)):
+            if column_id in (i*9 for i in range(1, 9)):
                 print("||", end=" ")
             print(column, end=' ')
         
         print("| ") # next line
-    print(("+" + ("-" * (size * 2 + 1) + "+") )* size)
+    print(("+" + ("-" * (9 * 2 + 1) + "+") )* 9)
     
 def solve_sudoku(__grid: list) -> (list or False):
     """solve sudoku
@@ -117,13 +114,12 @@ def solve_sudoku(__grid: list) -> (list or False):
     if r == None or r == False:
         return r
 
-    size = 9
-    grid = copy.deepcopy(__grid)
+    grid = copy.deepcopy(__grid) # avoid memory problems and concurence 
 
-    for row in range(size):
-        for column in range(size):
+    for row in range(9):
+        for column in range(9):
             if grid[row][column] == 0:
-                for i in range(1, size + 1):
+                for i in range(1, 10):
                     grid[row][column] = i
                     new = solve_sudoku(grid)
                     if new != False and new != None:
