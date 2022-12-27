@@ -45,21 +45,17 @@ def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list
 
     grid = copy.deepcopy(__grid)
     
-    if n_discover >= size ** 2:
+    if n_discover >= size ** 2: # want to discover every cases
         from solver import solve_sudoku
         return solve_sudoku(grid)
     
-    if n_discover > 0:
+    while n_discover > 0:
         row = rd.randint(0, size - 1)
         column = rd.randint(0, size - 1)
         if grid[row][column] == 0:
             grid[row][column] = rd.randint(1, size)
-            new = place_random_value(grid, size, n_discover - 1)
-            if new != False and new != None:
-                return new
-        return place_random_value(grid, size, n_discover)
-
-    # If no value to place in grid
+            n_discover -= 1
+    
     return grid
 
 def _test(grid, n_discover):

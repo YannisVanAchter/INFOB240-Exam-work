@@ -26,10 +26,12 @@ def generate_grid(size: int = None) -> (list[list[0]]):
     else:
         if not isinstance(size, int):
             raise TypeError("size must be an integer")
-        if size <= 3:
-            raise ValueError("size must be greater than 3")
-        if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square
-            raise ValueError("size must be greater an perfect square in this sudoku game")
+        
+        if size <= 3: # apply this condition to have a minimalist interesting game
+            raise ValueError(f"size must be greater than 3, not {size}")
+        
+        if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square, we apply this condition to have a buityfull grid on terminal
+            raise ValueError(f"size must be greater an perfect square in this sudoku game, not {size}")
     
     # generate blank grid and return
     return [ [0 for _ in range(size)] for _ in range(size)]

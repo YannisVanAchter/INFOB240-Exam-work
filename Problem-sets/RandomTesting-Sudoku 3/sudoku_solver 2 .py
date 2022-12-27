@@ -92,6 +92,9 @@ def print_sudoku(grid: list) -> (None):
         print("| ") # next line
     print(("+" + ("-" * (9 * 2 + 1) + "+") )* 9)
     
+from sudoku_checker1 import check_sudoku
+import copy
+
 def solve_sudoku(__grid: list) -> (list or False):
     """solve sudoku
 
@@ -107,8 +110,7 @@ def solve_sudoku(__grid: list) -> (list or False):
         NoneType: if the grid format is unvalable OR
         list: solved grid otherwise
     """
-    from sudoku_checker import check_sudoku
-    import copy
+    # naive solution: https://en.wikipedia.org/wiki/Sudoku_solving_algorithms
     
     r = check_sudoku(__grid)
     if r == None or r == False:

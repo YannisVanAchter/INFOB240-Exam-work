@@ -4,7 +4,7 @@ try:
 except:
     from checker import check_sudoku
 
-def solve_sudoku(__grid: list) -> (list or False):
+def solve_sudoku(_grid: list, size: int= None) -> (list or False):
     """solve sudoku
 
     solve sudoky by trying each posibility until it is finish
@@ -17,21 +17,23 @@ def solve_sudoku(__grid: list) -> (list or False):
         NoneType: if the grid format is unvalable
         list: solved grid otherwise
     """
-    r = check_sudoku(__grid, len(__grid))
+    # naive solution: https://en.wikipedia.org/wiki/Sudoku_solving_algorithms
+    r = check_sudoku(_grid, size)
     if r == None or r == False:
         return r
 
-    size = len(__grid)
-    grid = copy.deepcopy(__grid)
+    if size == None:
+        size = len(_grid)
+    grid = copy.deepcopy(_grid)
 
     for row in range(size):
         for column in range(size):
             if grid[row][column] == 0:
                 for i in range(1, size + 1):
                     grid[row][column] = i
-                    new = solve_sudoku(grid)
+                    new = solve_sudoku(grid, size)
                     if new != False and new != None:
-                        return new  # final return
+                        return new 
                 return False  # if there is a zero but no value to replace we go to mother call
 
     # If no zero in grid
@@ -40,7 +42,6 @@ def solve_sudoku(__grid: list) -> (list or False):
 
 def _test(grid, expected):
     r = solve_sudoku(grid)
-    print(r)
     assert r == expected, f"check_sudoku should return {expected}\n\t\tIn stead of {r}"
 
 
@@ -171,17 +172,6 @@ if __name__ == "__main__":
         # from blank
         (
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ],
-            [
                 [1, 2, 3, 4, 5, 6, 7, 8, 9], 
                 [4, 5, 6, 7, 8, 9, 1, 2, 3], 
                 [7, 8, 9, 1, 2, 3, 4, 5, 6], 
@@ -192,15 +182,19 @@ if __name__ == "__main__":
                 [6, 4, 2, 9, 7, 8, 5, 3, 1], 
                 [9, 7, 8, 5, 3, 1, 6, 4, 2]
             ],
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ],
         ),
         (
-            [
-                [2,4, 3,0],
-                [1,0, 0,2],
-                #---------
-                [3,0, 0,0],
-                [0,0, 0,0],
-            ],
             [
                 [2,4, 3,1],
                 [1,3, 4,2], 
@@ -208,12 +202,37 @@ if __name__ == "__main__":
                 [3,1, 2,4], 
                 [4,2, 1,3]
             ],
-        )
-    ]
-    # for expected, grid in data_test:
-    #     _test(grid, expected)
-    # print("All tests passed")
-    a = [
+            [
+                [2,4, 3,0],
+                [1,0, 0,2],
+                #---------
+                [3,0, 0,0],
+                [0,0, 0,0],
+            ],
+        ),
+        (
+            [
+                [1,3,6,11,      2,4,7,10,       5,8,9,16,       12,13,14,15], 
+                [2,4,7,10,      1,5,3,11,       12,15,13,14,    6,8,9,16], 
+                [5,8,15,13,     9,16,14,12,     1,11,2,6,       3,4,7,10], 
+                [9,12,14,16,    6,8,15,13,      3,10,4,7,       1,2,5,11], 
+                # -------------------------------------------------
+                [3,1,2,4,       10,6,5,7,       8,9,11,12,      13,15,16,14], 
+                [6,5,8,7,       3,15,1,2,       4,14,16,13,     9,10,11,12], 
+                [10,11,12,14,   4,13,9,16,      2,1,3,15,       5,6,8,7], 
+                [13,9,16,15,    8,12,11,14,     6,5,7,10,       2,1,3,4], 
+                # -------------------------------------------------
+                [4,2,1,3,       5,7,6,8,        9,12,10,11,     14,16,15,13], 
+                [7,6,5,8,       11,1,2,15,      13,16,14,3,     4,12,10,9], 
+                [11,14,10,12,   13,3,16,9,      15,2,1,4,       7,5,6,8], 
+                [15,16,13,9,    12,14,10,4,     7,6,5,8,        11,3,1,2], 
+                # --------------------------------------------------
+                [8,7,3,1,       14,2,4,5,       10,13,15,9,     16,11,12,6], 
+                [12,10,4,2,     16,9,8,1,       11,7,6,5,       15,14,13,3], 
+                [14,13,9,5,     15,11,12,6,     16,3,8,2,       10,7,4,1], 
+                [16,15,11,6,    7,10,13,3,      14,4,12,1,      8,9,2,5]
+            ],
+            [
                 [1,0,0,11, 2,0,0,10, 5,0,0,16, 0,0,0,0,],
                 [0,4,0,10, 0,5,0,11, 0,15,0,0, 0,0,0,0,],
                 [0,0,15,0, 0,0,14,0, 0,11,0,0, 0,0,0,0,],
@@ -233,6 +252,10 @@ if __name__ == "__main__":
                 [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
                 [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
                 [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-           ]
-    print(solve_sudoku(a))
+           ],
+        ),
+    ]
+    for expected, grid in data_test:
+        _test(grid, expected)
+    print("All tests passed")
 

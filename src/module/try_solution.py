@@ -18,20 +18,33 @@ def try_solution(_grid: list, row: int, column: int, solution: int) -> (list[lis
         column (int): column to try
         solution (int): value to insert and try
 
-    Returns:
-    --------
-        grid: updated_grid
-        bool: False if it failled
+    Return:
+    -------
+        (list): updated_grid
+        (bool): False if it failled, failure due to wrong place, wrong value or unsolvable grid
     """
+    r = check_sudoku(_grid)
+    if r == False or r == None:
+        return False
+    
     grid = copy.deepcopy(_grid)
     
     if grid[row][column] == 0:
         grid[row][column] = solution
-        new = check_sudoku(grid, len(grid))
-        if new != None and new != False:
-            solvable = solve_sudoku(grid)
-            if solvable == None or solvable == False:
+        check = check_sudoku(grid)
+        is_valid = check != None and check != False
+        if is_valid:
+            is_solvable = solve_sudoku(grid)
+            if is_solvable == None or is_solvable == False:
                 return False
             return grid
-    return False
 
+    return False
+    
+
+if __name__ == "__main__":
+    # TODO: test with random testing in ./_test.py
+    # Why ? 
+    # This is to test user input and if his choice is available to finish game
+    # By using random testing we will simulate a real user by avoiding cognitive bias
+    pass

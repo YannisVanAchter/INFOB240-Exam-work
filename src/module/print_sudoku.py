@@ -35,6 +35,7 @@ def print_sudoku(grid: list) -> (None):
             print(("+" + ("-" * (size * 2 + 1) + "+") )* size, end="\n| ")
         else: 
             print('|', end=" ")
+        
         # print element
         for column_id, column in enumerate(row):
             if column_id in (i*size for i in range(1, size)):

@@ -24,7 +24,10 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
         
         Bool:     False: not 0 <= element <= size OR element at least 2 time in the same row OR element at least 2 time in the same column
                   True: If this is an valid sudoku grid
-    """
+    """    
+    if not isinstance(grid, list):
+        return None
+    
     if size is None:
         size = len(grid)
         
@@ -33,16 +36,20 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
     if size <= 3:
         raise ValueError(f"size must be greater than 3\n\tNo {size}")
     if int(math.sqrt(size)) != math.sqrt(size): # this is not a perfect square
-        raise ValueError("size must be greater than 6 in this sudoku game")
-        
-    if not isinstance(grid, list) and len(grid) != size:
+        raise ValueError("size must be greater than 3 in this sudoku game")
+    
+    if len(grid) != size:
         return None
 
-    # general testing on each row
+    # general testing on each row/column
     column = { i: [] for i in range(size) } # for test on column
     for row in grid:
-        if not isinstance(row, list) or len(row) != size:
+        if not isinstance(row, list):
             return None
+        
+        if len(row) != size:
+            return None
+        
         d = set()  # make sure there is only on occurence of each element
         for id, element in enumerate(row):
             if not isinstance(element, int):
@@ -50,8 +57,7 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
             
             if not 0 <= element <= size:
                 return False
-            
-            
+
             if element != 0:
                 if element in d:
                     return False

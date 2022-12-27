@@ -23,6 +23,7 @@ def get_user_input(
         i = get_string(prompt).strip()
         if re.match(reg_exp, i):
             return i
+        # easters eggs ;)
         elif i == "Qui a écrit ce code ?":
             print("Il s'agit de Yannis Van Achter ;)")
         elif i in ["Est-ce que ce code a des bugs ?", "Est-ce que ce programme a des bugs ?"]:
@@ -31,15 +32,14 @@ def get_user_input(
         elif i in ["Comment arrêter ce programme ?", "Et comment le stoper alors ?"]:
             print("Appuyer sur la touche \"ctrl\" + \"C\" sous windows. Cela arretera le programme\nVous pouvez juste finir la partie aussi, c'est plus intéressant")
 
-
 if __name__ == "__main__":
     """
-    TODO ON:
-        (3, 4): 3
-        (10, 3): 3
-        (3, 30): 3
-        (2, 4): 40
-        Je suis une phrase
+    TO TEST ON:
+        (3, 4): 3 -> success
+        (10, 3): 3 -> ask again
+        (3, 30): 3 -> ask again
+        (2, 4): 40 -> ask again
+        Je suis une phrase -> ask again
     """
     # TODO: Comment rendre la complession automatique dans la ligne de commande (automatiser les inputs utilisateur pour les tests)
     while True:

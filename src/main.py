@@ -56,17 +56,22 @@ def get_input(grid, size) -> (dict[str, int]):
     clear_console()
     print_sudoku(grid)
     while True:
-        # Have to pace two curlets braces ("{}") to add one by the f-string and the n° of number we want for the reg exp
+        # Have to place two curlets braces ("{}") due to the concurence between r-string and f-string
+        # https://stackoverflow.com/questions/45527889/how-do-i-use-f-string-with-regex-in-python
         i = get_user_input(reg_exp = fr"\([1-{size}]{{1}}, [1-{size}]{{1}}\): [1-{size}]{{1}}") 
         i = i.split(":")
         try:
             coord, value = ast.literal_eval(i[0]), int(i[1]) # critic line: change type of input
             row, column = coord
             if (0 < row < size + 1) and (0 < column < size + 1) and (0 < value < size + 1):
-                return {"row": row - 1, "column": column - 1, "value": value}
+                return {
+                            "row": row - 1, # minus one for row id in a list
+                            "column": column - 1, # as above
+                            "value": value,
+                        }
             print(f"Row: {row}\nColumn: {column}\nValue: {value}\nWas not accepted, check it is include between 0 and {size}.")
         except Exception as e:
-            print("Make sur you enter some integers following the syntax expected.")
+            print("Make sure you enter some integers following the syntax expected.")
 
 def main():
     run = True
@@ -95,6 +100,7 @@ def main():
             
             time.sleep(1)
             
+        # quit condition 
         quit: str = get_string("Do you want quit the game ?\n(Y/N) ")
         if quit != None and quit.lower().startswith(("y", "q")):
             run = False
