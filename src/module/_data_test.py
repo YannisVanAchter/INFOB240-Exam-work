@@ -68,7 +68,7 @@ data = [
             ],
             None,
             9.0,
-            None,
+            TypeError,
         ), 
         (
             None,

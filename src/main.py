@@ -6,6 +6,7 @@ import ast
 import time
 import math
 import copy
+import sys
 
 # venv modules
 from cs50 import get_int, get_string
@@ -78,6 +79,11 @@ def main():
     while run:
         # set game parameters
         size = get_grid_size()
+        if size > 25:
+            sys.setrecursionlimit(size**2)
+        else:
+            sys.setrecursionlimit(993) # default recursion limit in python
+        
         difficutly = get_int("Enter the difficulty you want (n° of case discoverd): ")
         while difficutly < 0 or difficutly >= size**2:
             difficutly = get_int("Enter the difficulty you want (n° of case discoverd): ")

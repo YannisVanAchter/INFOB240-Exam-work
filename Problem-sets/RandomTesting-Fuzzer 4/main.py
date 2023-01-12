@@ -4,9 +4,6 @@ import math
 import random
 import subprocess
 import time
-import os.path as pt
-
-from cs50 import get_int
 
 def fuzzer(app: str, nb_tests: int, fuzz_output: str, file_list: list, factor: int):
     for test_id in range(nb_tests):

@@ -42,7 +42,7 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
         return None
 
     # general testing on each row/column
-    column = { i: [] for i in range(size) } # for test on column
+    column = [set() for _ in range(size) ] # for test on column
     for row in grid:
         if not isinstance(row, list):
             return None
@@ -66,14 +66,15 @@ def check_sudoku(grid: list, size: int=None) -> (None or bool):
                 # test on column
                 if element in column[id]:
                     return False
-                column[id].append(element)
+                column[id].add(element)
 
     # general test on sub-grid 3x3
-    for row_id in range(0, size, int(math.sqrt(size))):
-        for column_id in range(0, size, int(math.sqrt(size))):
+    jump = int(math.sqrt(size))
+    for row_id in range(0, size, jump):
+        for column_id in range(0, size, jump):
             d = {}
-            for i in range(int(math.sqrt(size))):
-                for j in range(int(math.sqrt(size))):
+            for i in range(jump):
+                for j in range(jump):
                     value = grid[row_id + i][column_id + j]
                     if value != 0 and value in d:
                         return False

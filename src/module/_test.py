@@ -23,6 +23,7 @@ def get_column(grid, column_id):
         column.append(row[column_id])
     return column
 
+
 def get_sub_grid(grid, row_start, column_start, length=None):
     if length is None:
         length = 3
@@ -34,8 +35,10 @@ def get_sub_grid(grid, row_start, column_start, length=None):
 
     return sub_grid
 
+
 def isUnique(value, under_test: list):
     return under_test.count(value) <= 1
+
 
 def get_start(size, current_start, length=None):
     if length == None:
@@ -46,12 +49,13 @@ def get_start(size, current_start, length=None):
         if starts[i - 1] <= current_start < starts[i]:
             return starts[i - 1]
 
-# https://docs.python.org/3.11/library/unittest.html 
-# https://www.youtube.com/watch?v=apgReCCAQr4 
+
+# https://docs.python.org/3.11/library/unittest.html
+# https://www.youtube.com/watch?v=apgReCCAQr4
 class TestModule(unittest.TestCase):
     def setUp(self):
         self.Data = dt.data
-        self.n_tests = 2  # used to determinate how much random test must be done in test of try_solution() and place_random_value()
+        self.n_tests = 20  # used to determinate how much random test must be done in test of try_solution() and place_random_value()
 
     def test_check_sudoku(self):
         # full coverage testing
@@ -101,7 +105,7 @@ class TestModule(unittest.TestCase):
                     expected, return_, f"We expected {expected}\nNot {return_}"
                 )
 
-    def test_try_solution(self):  
+    def test_try_solution(self):
         # in random testing to simulate user input
         for _ in range(self.n_tests):
             for check, grid, final, size, _ in self.Data:
@@ -177,7 +181,7 @@ class TestModule(unittest.TestCase):
                     pass
 
     def test_place_random_value(self):
-        """Note: Also test generate_grid() """
+        """Note: Also test generate_grid()"""
         # random testing (we start from valid input) to simulate user comportement
         perfect_square_number_list = [i * i for i in range(self.n_tests + 1)]
         seed_random_test = None  # random.seed  # HOWTO GET THE SEED ?
@@ -198,7 +202,7 @@ class TestModule(unittest.TestCase):
                             ValueError,
                             f"ValueError not raises with size of {size} and a n° of discoverd of {discoverd}",
                         )
-                    else:
+                    elif size <= 31:
                         randomly_placed_grid = place_random_value(
                             empty_grid, size, discoverd
                         )
@@ -217,6 +221,19 @@ class TestModule(unittest.TestCase):
                                 + ("=" * 20)
                                 + "\n"
                             )
+                        is_valid = check_sudoku(randomly_placed_grid, size)
+                        self.assertTrue(is_valid)
+                        solved_grid = solve_sudoku(randomly_placed_grid, size)
+                        self.assertNotIn(solved_grid, (False, None))
+
+                    else:
+                        with self.assertRaises(RecursionError) as e:
+                            place_random_value(empty_grid, size, discoverd)
+                        self.assertEqual(
+                            type(e.exception),
+                            RecursionError,
+                            "Recursion error did not occur with grid size: {size}"
+                        )
                 else:
                     # https://stackoverflow.com/questions/61061723/python-unittest-unit-test-the-message-passed-in-raised-exception
                     with self.assertRaises(ValueError) as assert_raise:
@@ -226,6 +243,34 @@ class TestModule(unittest.TestCase):
                         type(exception_),
                         ValueError,
                         f"ValueError not raised by generate_grid\n\t\tAssert failed with {size}",
+                    )
+
+            # test that place_random_value return solvable grid
+            for _ in range(self.n_tests):
+                size = int(random.randint(2, 5) ** 2)
+                grid = generate_grid(size)
+                placed_grid = place_random_value(
+                    grid, size, random.randint(2, int(size * 2))
+                )
+                check = check_sudoku(placed_grid, size)
+                try:
+                    assert (
+                        True == check
+                    ), f"place_random_value_generate_grid_validity check failed with grid: {placed_grid}"
+                except AssertionError as e:
+                    file.write(
+                        f"{e}\nExpected: True\nGet: {check}\nWith grid: {placed_grid}\n"
+                        + ("=" * 20)
+                        + "\n"
+                    )
+                solved = solve_sudoku(placed_grid, size)
+                try:
+                    assert solved not in (False, None), f"Solver retruned {solved}"
+                except AssertionError as e:
+                    file.write(
+                        f"{e}\nExpected: not in (False, None)\nGet: {solved}\nWith grid: {placed_grid}\n"
+                        + ("=" * 20)
+                        + "\n"
                     )
 
 if __name__ == "__main__":

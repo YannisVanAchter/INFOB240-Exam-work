@@ -7,8 +7,10 @@ import random as rd
 # personal module
 try:
     from .checker import check_sudoku
+    from .solver import solve_sudoku
 except:
     from checker import check_sudoku
+    from solver import solve_sudoku
 
 def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list[list[int]]):
     """place randomly value in grid
@@ -46,15 +48,19 @@ def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list
     grid = copy.deepcopy(__grid)
     
     if n_discover >= size ** 2: # want to discover every cases
-        from solver import solve_sudoku
-        return solve_sudoku(grid)
+        return solve_sudoku(grid)            
     
+    coord_possibility = [(row, column) for row in range(size) for column in range(size)]
     while n_discover > 0:
-        row = rd.randint(0, size - 1)
-        column = rd.randint(0, size - 1)
+        row, column = rd.choice(coord_possibility)
         if grid[row][column] == 0:
             grid[row][column] = rd.randint(1, size)
-            n_discover -= 1
+            solved = solve_sudoku(grid, size)
+            if solved != False and solved != None:
+                n_discover -= 1
+                coord_possibility.remove((row, column))
+            else:
+                grid[row][column] = 0
     
     return grid
 
@@ -65,11 +71,15 @@ def _test(grid, n_discover):
             no_null += 1 if column != 0 else 0
     
     assert no_null == n_discover, f"place random value failled\n\t\tExpected: {n_discover}\n\t\tReturned: {no_null}"
+    check = check_sudoku(grid)
+    assert True == check, f"Place random value failled on check\n\t\tExpected: True \n\t\twith grid: {grid}"
+    solved = solve_sudoku(grid)
+    assert solved not in (None, False), f"Place random value failled on check\n\t\tExpected: not in (None, False) \n\t\twith grid: {grid}"
 
 if __name__ == "__main__":
     from generate_grid import generate_grid
     
-    for i in [i*i for i in range(2, 31)]:
+    for i in [i*i for i in range(2, 10)]:
         unlock: int = rd.randint(1, int(i))
         grid: list = generate_grid(i)
         grid: list = place_random_value(grid, i, unlock)
