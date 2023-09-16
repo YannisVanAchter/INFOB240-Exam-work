@@ -4,17 +4,9 @@
 import copy
 import random as rd
 
-# personal module
-try:
-    from .checker import check_sudoku
-    from .solver import solve_sudoku
-    from .print_sudoku import print_sudoku
-except:
-    from checker import check_sudoku
-    from solver import solve_sudoku
-    from print_sudoku import print_sudoku
     
 def _generate_random_completed_grid(_grid, row = 0, col = 0):
+    from checker import check_sudoku
     size = len(_grid) - 1
     grid = copy.deepcopy(_grid)
     
@@ -60,29 +52,3 @@ def place_random_value(__grid: list, size: int, n_discover: int = None) -> (list
     _, grid = _generate_random_completed_grid(__grid)
     grid = _delete_values(grid, size**2 - n_discover)
     return grid
-
-def _test(grid, n_discover):
-    no_null = 0
-    for row in grid:
-        for column in row:
-            no_null += 1 if column != 0 else 0
-    
-    # print_sudoku(grid)
-    
-    assert no_null == n_discover, f"place random value failled\n\t\tExpected: {n_discover}\n\t\tReturned: {no_null}"
-    check = check_sudoku(grid)
-    assert True == check, f"Place random value failled on check\n\t\tExpected: True \n\t\twith grid: {grid}"
-    solved = solve_sudoku(grid)
-    assert solved not in (None, False), f"Place random value failled on check\n\t\tExpected: not in (None, False) \n\t\twith grid: {grid}"
-
-if __name__ == "__main__":
-    from generate_grid import generate_grid
-    
-    for i in [4, 9]:
-        unlock: int = rd.randint(1, int(i))
-        grid: list = generate_grid(i)
-        grid = place_random_value(grid, i, unlock)
-        print(int(i**0.5))
-        _test(grid, unlock)
-    
-    print("All tests passed")

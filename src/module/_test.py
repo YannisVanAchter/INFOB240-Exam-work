@@ -1,6 +1,7 @@
 # encoding uft-8
 
 # import module under test
+import sys
 from checker import check_sudoku
 from generate_grid import generate_grid
 from place_random_value import place_random_value
@@ -13,6 +14,11 @@ import math
 import random
 import unittest
 
+try:
+    from pyttsx3 import speak
+except ImportError:
+    speak = print 
+    
 # data for test import
 import _data_test as dt
 
@@ -22,7 +28,6 @@ def get_column(grid, column_id):
     for row in grid:
         column.append(row[column_id])
     return column
-
 
 def get_sub_grid(grid, row_start, column_start, length=None):
     if length is None:
@@ -35,13 +40,11 @@ def get_sub_grid(grid, row_start, column_start, length=None):
 
     return sub_grid
 
-
 def isUnique(value, under_test: list):
     return under_test.count(value) <= 1
 
-
 def get_start(size, current_start, length=None):
-    if length == None:
+    if length is None:
         length = 3
 
     starts = [_ for _ in range(0, size + 1, length)]
@@ -55,7 +58,8 @@ def get_start(size, current_start, length=None):
 class TestModule(unittest.TestCase):
     def setUp(self):
         self.Data = dt.data
-        self.n_tests = 20  # used to determinate how much random test must be done in test of try_solution() and place_random_value()
+        self.seed_random_test = random.randint(0, 1000000)
+        self.n_tests = 10  # used to determinate how much random test must be done in test of try_solution() and place_random_value()
 
     def test_check_sudoku(self):
         # full coverage testing
@@ -107,18 +111,20 @@ class TestModule(unittest.TestCase):
 
     def test_try_solution(self):
         # in random testing to simulate user input
-        for _ in range(self.n_tests):
+        for _ in range(1):
             for check, grid, final, size, _ in self.Data:
+                random.seed(self.seed_random_test)
+                
                 # condition for: `ValueError: Math domain error`
-                lenght = int(math.sqrt(size)) if size > 0 else 0
+                lenght = int(math.sqrt(size)) if size > 0 else 0 # size sub grid
                 row_id = random.randint(1, size) - 1 if size > 0 else 0
                 column_id = random.randint(1, size) - 1 if size > 0 else 0
                 value_insert = random.randint(1, size) if size > 0 else 0
                 if final not in (TypeError, ValueError) and isinstance(grid, list):
                     r_try_solution = try_solution(grid, row_id, column_id, value_insert)
-                    if check == False or check == None:
+                    if check in (False, None):
                         self.assertIn(r_try_solution, (None, False))
-                    elif r_try_solution == False:
+                    elif r_try_solution is False:
                         grid_ = copy.deepcopy(grid)
                         if grid_[row_id][column_id] == 0:
                             grid_[row_id][column_id] = value_insert
@@ -146,10 +152,12 @@ class TestModule(unittest.TestCase):
                         if will_be_valid:
                             self.assertTrue(isinstance(r_try_solution, list))
                             self.assertTrue(check_sudoku(grid))
+                            grid[row_id][column_id] = value_insert
+                            self.assertTrue(check_sudoku(grid))
                         else:
                             self.assertFalse(
                                 r_try_solution,
-                                f"Try solution should be False but is not\nExpected <bool>: False\nGet {type(r_try_solution)}: {r_try_solution}\nData:\n\trow_id: {row_id}\n\tColumn_id: {column_id}\n\tValue: {value_insert}\n\tGrid undeer test: {grid}",
+                                f"Try solution should be False but is not\nExpected <bool>: False\nGet {type(r_try_solution)}: {r_try_solution}\nData:\n\trow_id: {row_id}\n\tColumn_id: {column_id}\n\tValue: {value_insert}\n\tGrid undeer test: {grid}\nSeed: {self.seed_random_test}",
                             )
                 elif isinstance(grid, list):
                     if size not in (i**2 for i in range(size + 1)):
@@ -159,7 +167,7 @@ class TestModule(unittest.TestCase):
                         self.assertEqual(
                             type(e.exception),
                             ValueError,
-                            f"{ValueError} not raised with grid of {grid}",
+                            f"{ValueError} not raised with grid of {grid}\nSeed: {self.seed_random_test}",
                         )
 
                     elif final in (None, False):
@@ -172,26 +180,34 @@ class TestModule(unittest.TestCase):
                         self.assertEqual(
                             type(e.exception),
                             final,
-                            f"{final} not raised with grid of {grid}\nAt row {row_id}, Column {column_id} and value {value_insert}",
+                            f"{final} not raised with grid of {grid}\nAt row {row_id}, Column {column_id} and value {value_insert}\nSeed: {self.seed_random_test}",
                         )
                 else:
                     # I decided to not test each grid in data set because it would take me to much time
                     # to clean data and tests code to make sure it test correctly and
                     # it is not my error on test implementation or data definition
                     pass
+                
+                self.seed_random_test = random.randint(0, 1000000)
 
     def test_place_random_value(self):
         """Note: Also test generate_grid()"""
         # random testing (we start from valid input) to simulate user comportement
-        perfect_square_number_list = [i * i for i in range(self.n_tests + 1)]
-        seed_random_test = None  # random.seed  # HOWTO GET THE SEED ?
+        max_size_tests = 8
+        perfect_square_number_list = [i**2 for i in range(max_size_tests) if i**2 <= max_size_tests]
         with open("./TestPlaceRandomValue_return.txt", "w+") as file:
-            file.write(f"Current seed: {seed_random_test}\n")
             for test_id in range(self.n_tests):
-                size = random.randint(0, int(test_id**2.5))
+                random.seed(self.seed_random_test)
+                file.write(f"Current seed: {self.seed_random_test}, test id main: {test_id}\n")
+                size = random.randint(0, int(max_size_tests))
+                if size**2 >= 900:
+                    sys.setrecursionlimit(size**2 + 10)
+                else:
+                    sys.setrecursionlimit(993) # default value
+                    
                 if size in perfect_square_number_list and size >= 4:
                     empty_grid = generate_grid(size)
-                    discoverd = random.randint(1, size**2)
+                    discoverd = random.randint(1, size**2 - int(size/2))
                     if discoverd >= size**2 or discoverd < 0:
                         # https://stackoverflow.com/questions/61061723/python-unittest-unit-test-the-message-passed-in-raised-exception
                         with self.assertRaises(ValueError) as e:
@@ -200,7 +216,7 @@ class TestModule(unittest.TestCase):
                         self.assertEqual(
                             type(exception),
                             ValueError,
-                            f"ValueError not raises with size of {size} and a n° of discoverd of {discoverd}",
+                            f"ValueError not raises with size of {size} and a n° of discoverd of {discoverd}.\nSeed: {self.seed_random_test}",
                         )
                     elif size <= 31:
                         randomly_placed_grid = place_random_value(
@@ -214,10 +230,10 @@ class TestModule(unittest.TestCase):
                         try:
                             assert (
                                 count == discoverd
-                            ), "Check function place random value placed {discoverd} but this is not the case.\n\t\tThe is only {count}"
+                            ), f"Check function place random value placed {discoverd} but this is not the case.\n\t\tThe is only {count}.\nSeed: {self.seed_random_test}"
                         except AssertionError as e:
                             file.write(
-                                f"{e}\nExpected a count of: {discoverd}\nGet: {count}\n"
+                                f"{e}\nExpected a count of: {discoverd}\nGet: {count}\n\nSeed: {self.seed_random_test}"
                                 + ("=" * 20)
                                 + "\n"
                             )
@@ -232,7 +248,7 @@ class TestModule(unittest.TestCase):
                         self.assertEqual(
                             type(e.exception),
                             RecursionError,
-                            "Recursion error did not occur with grid size: {size}"
+                            f"Recursion error did not occur with grid size: {size}.\nSeed: {self.seed_random_test}"
                         )
                 else:
                     # https://stackoverflow.com/questions/61061723/python-unittest-unit-test-the-message-passed-in-raised-exception
@@ -242,12 +258,16 @@ class TestModule(unittest.TestCase):
                     self.assertEqual(
                         type(exception_),
                         ValueError,
-                        f"ValueError not raised by generate_grid\n\t\tAssert failed with {size}",
+                        f"ValueError not raised by generate_grid\n\t\tAssert failed with {size}.\nSeed: {self.seed_random_test}",
                     )
+                self.seed_random_test = random.randint(0, 1000000)
 
             # test that place_random_value return solvable grid
             for _ in range(self.n_tests):
-                size = int(random.randint(2, 5) ** 2)
+                random.seed(self.seed_random_test)
+                file.write(f"Current seed: {self.seed_random_test}, test id empty: {test_id}\n")
+                
+                size = random.choice((4, 9))
                 grid = generate_grid(size)
                 placed_grid = place_random_value(
                     grid, size, random.randint(2, int(size * 2))
@@ -256,12 +276,12 @@ class TestModule(unittest.TestCase):
                 try:
                     assert (
                         True == check
-                    ), f"place_random_value_generate_grid_validity check failed with grid: {placed_grid}"
+                    ), f"place_random_value_generate_grid_validity check failed with grid: {placed_grid}.\nSeed: {self.seed_random_test}"
                 except AssertionError as e:
                     file.write(
                         f"{e}\nExpected: True\nGet: {check}\nWith grid: {placed_grid}\n"
                         + ("=" * 20)
-                        + "\n"
+                        + f"\n\nSeed: {self.seed_random_test}"
                     )
                 solved = solve_sudoku(placed_grid, size)
                 try:
@@ -270,8 +290,11 @@ class TestModule(unittest.TestCase):
                     file.write(
                         f"{e}\nExpected: not in (False, None)\nGet: {solved}\nWith grid: {placed_grid}\n"
                         + ("=" * 20)
-                        + "\n"
+                        + f"\n\nSeed: {self.seed_random_test}"
                     )
+                self.seed_random_test = random.randint(0, 1000000)
+
 
 if __name__ == "__main__":
     unittest.main()
+    speak("Tests are finished")

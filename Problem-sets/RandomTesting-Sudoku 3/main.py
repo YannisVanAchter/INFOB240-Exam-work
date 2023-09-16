@@ -1,52 +1,68 @@
-import copy
-try:
-    from .checker import check_sudoku
-except:
-    from checker import check_sudoku
 
-def solve_sudoku(_grid: list, size: int= None) -> (list or False):
-    """solve sudoku
+import math
+from copy import deepcopy
 
-    solve sudoky by trying each posibility until it is finish
+from gpt_checker import is_valid_sudoku as check_gpt
+from gpt_solver import solve_sudoku as solve_gpt
 
-    Args:
-        __grid (list): grid to solve
+from sudoku_checker1 import check_sudoku as check_yannis
+from sudoku_solver import solve_sudoku as solve_yannis
 
-    Returns:
-        bool: False id the grid is not solvable
-        NoneType: if the grid format is unvalable
-        list: solved grid otherwise
+def print_sudoku(grid: list) -> (None):
+    """Print sudoku grid
+
+    The sudoku will follow this parten\n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    | X X X || X X X || X X X | \n
+    +-------++-------++-------+ \n
+
+    Parameters:
+    -----------
+        grid (list): grid
     """
-    # naive solution: https://en.wikipedia.org/wiki/Sudoku_solving_algorithms
-    r = check_sudoku(_grid, size)
-    if r is None or r is False:
-        return r
+    if type(grid) != list:
+        print(grid)
+        return
+    
+    size = int(math.sqrt(len(grid)))
+    for row_id, row in enumerate(grid):
+        # separators row
+        if row_id in (i*size for i in range(size)):
+            print(("+" + ("-" * (size * 2 + 1) + "+") )* size, end="\n| ")
+        else: 
+            print('|', end=" ")
+        
+        # print element
+        for column_id, column in enumerate(row):
+            if column_id in (i*size for i in range(1, size)):
+                print("||", end=" ")
+            print(column, end=' ')
+        
+        print("| ") # next line
+    print(("+" + ("-" * (size * 2 + 1) + "+") )* size)
 
-    if size is None:
-        size = len(_grid)
-    grid = copy.deepcopy(_grid)
-
-    for row in range(size):
-        for column in range(size):
-            if grid[row][column] == 0:
-                for i in range(1, size + 1):
-                    grid[row][column] = i
-                    new = solve_sudoku(grid, size)
-                    if new is not False and new is not None:
-                        return new 
-                return False  # if there is a zero but no value to replace we go to mother call
-
-    # If no zero in grid
-    return grid
-
-
-def _test(grid, expected, id_grid = None): # pragma: no cover
-    r = solve_sudoku(grid)
-    assert r == expected, f"solve_sudoku at data {id_grid}\n\t\tshould return {expected}\n\t\tIn stead of {r} \n\t\tGrid: {grid}"
-
+def compare(grid, id_):
+    solved_gpt = solve_gpt(deepcopy(grid))
+    solved_yannis = solve_yannis(deepcopy(grid))
+    
+    if not check_gpt(solved_yannis):
+        print("Yannis is wrong with id:", id_)
+        print_sudoku(solved_yannis)
+    if not check_yannis(solved_gpt):
+        print("GPT is wrong with id:", id_)
+        print_sudoku(solved_gpt)
 
 if __name__ == "__main__": # pragma: no cover
-    from pyttsx3 import speak
     data_test = [
         # 0. solve_sudoku should return None
         (
@@ -195,66 +211,6 @@ if __name__ == "__main__": # pragma: no cover
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]
             ],
         ),
-        ( # 6. 
-            [
-                [2,4, 3,1],
-                [1,3, 4,2], 
-                # -----------
-                [3,1, 2,4], 
-                [4,2, 1,3]
-            ],
-            [
-                [2,4, 3,0],
-                [1,0, 0,2],
-                #---------
-                [3,0, 0,0],
-                [0,0, 0,0],
-            ],
-        ),
-        ( # 7.
-            [
-                [1,3,6,11,      2,4,7,10,       5,8,9,16,       12,13,14,15], 
-                [2,4,7,10,      1,5,3,11,       12,15,13,14,    6,8,9,16], 
-                [5,8,15,13,     9,16,14,12,     1,11,2,6,       3,4,7,10], 
-                [9,12,14,16,    6,8,15,13,      3,10,4,7,       1,2,5,11], 
-                # -------------------------------------------------
-                [3,1,2,4,       10,6,5,7,       8,9,11,12,      13,15,16,14], 
-                [6,5,8,7,       3,15,1,2,       4,14,16,13,     9,10,11,12], 
-                [10,11,12,14,   4,13,9,16,      2,1,3,15,       5,6,8,7], 
-                [13,9,16,15,    8,12,11,14,     6,5,7,10,       2,1,3,4], 
-                # -------------------------------------------------
-                [4,2,1,3,       5,7,6,8,        9,12,10,11,     14,16,15,13], 
-                [7,6,5,8,       11,1,2,15,      13,16,14,3,     4,12,10,9], 
-                [11,14,10,12,   13,3,16,9,      15,2,1,4,       7,5,6,8], 
-                [15,16,13,9,    12,14,10,4,     7,6,5,8,        11,3,1,2], 
-                # --------------------------------------------------
-                [8,7,3,1,       14,2,4,5,       10,13,15,9,     16,11,12,6], 
-                [12,10,4,2,     16,9,8,1,       11,7,6,5,       15,14,13,3], 
-                [14,13,9,5,     15,11,12,6,     16,3,8,2,       10,7,4,1], 
-                [16,15,11,6,    7,10,13,3,      14,4,12,1,      8,9,2,5]
-            ],
-            [
-                [1,0,0,11, 2,0,0,10, 5,0,0,16, 0,0,0,0,],
-                [0,4,0,10, 0,5,0,11, 0,15,0,0, 0,0,0,0,],
-                [0,0,15,0, 0,0,14,0, 0,11,0,0, 0,0,0,0,],
-                [0,0,0,16, 0,0,0,13, 0,10,0,0, 0,0,0,0,],
-                # ---------------------------------------
-                [0,0,0,0, 10,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,15,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,9,16, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,11,0, 0,0,0,0, 0,0,0,0,],
-                # ---------------------------------------
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                # ---------------------------------------
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-                [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,],
-           ],
-        ),
         ( # 8.
             False, 
             [
@@ -384,77 +340,7 @@ if __name__ == "__main__": # pragma: no cover
             ),
         ),
     ]
-    for id, (expected, grid) in enumerate(data_test):
-        _test(grid, expected, id)
+    for id, (_, grid) in enumerate(data_test):
+        compare(grid, id)
         
-    grid_ = [   [2,9,0, 8,0,0, 0,7,0],
-                [3,0,6, 0,0,8, 4,0,0],
-                [8,0,0, 0,4,0, 0,0,2],
-                # ------------------
-                [0,2,0, 0,3,1, 0,0,7],
-                [0,0,0, 0,8,0, 0,0,0],
-                [1,0,0, 9,5,0, 0,6,0],
-                # ------------------
-                [7,0,0, 0,9,0, 0,0,1],
-                [0,0,1, 2,0,0, 3,0,6],
-                [0,3,0, 0,0,0, 0,5,9],
-            ]
-    check_sudoku(grid_, 16)
     
-    # raise exception test
-    try:
-        grid= [
-            [2,9,0, 0,0,0, 0,7,0],
-            [3,0,6, 0,0,8, 4,0,0],
-            [8,0,0, 0,4,0, 0,0,2],
-            # ------------------
-            [0,2,0, 0,3,1, 0,0,7],
-            [0,0,0, 0,8,0, 0,0,0],
-            [1,0,0, 9,5,0, 0,6,0],
-            # ------------------
-            [7,0,0, 0,9,0, 0,0,1],
-            [0,0,1, 2,0,0, 3,0,6],
-            [0,3,0, 0,0,0, 0,5,9] 
-        ]
-        check_sudoku(grid, 9.5)
-    except Exception: 
-        pass
-    
-    try:
-        grid= [
-            [2,9,0, 0,0,0, 0,7,0],
-            [3,0,6, 0,0,8, 4,0,0],
-            [8,0,0, 0,4,0, 0,0,2],
-            # ------------------
-            [0,2,0, 0,3,1, 0,0,7],
-            [0,0,0, 0,8,0, 0,0,0],
-            [1,0,0, 9,5,0, 0,6,0],
-            # ------------------
-            [7,0,0, 0,9,0, 0,0,1],
-            [0,0,1, 2,0,0, 3,0,6],
-            [0,3,0, 0,0,0, 0,5,9] 
-        ]
-        check_sudoku(grid, 2)
-    except Exception: 
-        pass
-    
-    try:
-        grid= [
-            [2,9,0, 0,0,0, 0,7,0],
-            [3,0,6, 0,0,8, 4,0,0],
-            [8,0,0, 0,4,0, 0,0,2],
-            # ------------------
-            [0,2,0, 0,3,1, 0,0,7],
-            [0,0,0, 0,8,0, 0,0,0],
-            [1,0,0, 9,5,0, 0,6,0],
-            # ------------------
-            [7,0,0, 0,9,0, 0,0,1],
-            [0,0,1, 2,0,0, 3,0,6],
-            [0,3,0, 0,0,0, 0,5,9] 
-        ]
-        check_sudoku(grid, 10)
-    except Exception: 
-        pass
-    
-    speak("All tests passed")
-

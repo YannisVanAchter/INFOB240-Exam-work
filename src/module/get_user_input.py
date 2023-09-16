@@ -28,7 +28,8 @@ def get_user_input(
             print("Il s'agit de Yannis Van Achter ;)")
         elif i in ["Est-ce que ce code a des bugs ?", "Est-ce que ce programme a des bugs ?"]:
             print("Non, il n'y a aucun bug trouvé.\nCar il n'y a eu aucun test dessus 🤣😅")
-            print("En effet pour qu'il y ai un bug trouvé, il a été réglé par le développeur du programme 😉")
+            print("Car comme nous le savons, pour qu'il y ai un bug trouvé, il faut qu'il y ai un test qui le trouve 😉")
+            print("Or, pour chaque bug trouvé, il a été réglé par le développeur du programme 😉")
         elif i in ["Comment arrêter ce programme ?", "Et comment le stoper alors ?"]:
             print("Appuyer sur la touche \"ctrl\" + \"C\" sous windows. Cela arretera le programme\nVous pouvez juste finir la partie aussi, c'est plus intéressant")
 
@@ -43,4 +44,4 @@ if __name__ == "__main__":
     """
     # TODO: Comment rendre la complession automatique dans la ligne de commande (automatiser les inputs utilisateur pour les tests)
     while True:
-        print("Return: ", get_user_input())
+        print("\n\nReturn: ", get_user_input())

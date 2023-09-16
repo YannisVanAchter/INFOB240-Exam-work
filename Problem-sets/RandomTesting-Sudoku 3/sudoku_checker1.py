@@ -145,39 +145,43 @@ def check_sudoku(grid: list) -> (None or bool):
         Bool:     False: not 0 <= element <= 9 OR element at least 2 time in the same row OR element at least 2 time in the same column OR element at least 2 time in the same sub-grid
                   True: If this is an valid sudoku grid
     """
-    if not isinstance(grid, list) and len(grid) != 9:
+    
+    # sanity check
+    if not isinstance(grid, list) or len(grid) != 9:
         return None
-
-    # general testing on each row
-    column = { i: [] for i in range(9) } # for tests on column
+    
     for row in grid:
         if not isinstance(row, list) or len(row) != 9:
             return None
-        d = set()  # make sure there is only on occurence of each element
-        for id, element in enumerate(row):
+        
+        for element in row:
             if not isinstance(element, int):
                 return None
+
+    # validity of grid check
+    column = [ set() for i in range(9)] # for tests on column
+    for row_id, row in enumerate(grid):
+        row_set = set()  # make sure there is only on occurence of each element
+        for column_id, element in enumerate(row):
             if not 0 <= element <= 9:
                 return False
             if element != 0 :
-                if element in d:
+                if element in row_set:
                     return False
-                d.add(element)
+                row_set.add(element)
                 
-                if element in column[id]:
+                if element in column[column_id]:
                     return False
-                column[id].append(element)
+                column[column_id].add(element)
 
-    # general test on sub-grid 3x3
-    for row_id in range(0, 9, 3):
-        for column_id in range(0, 9, 3):
-            d = {}
-            for i in range(3):
-                for j in range(3):
-                    value = grid[row_id + i][column_id + j]
-                    if value != 0 and value in d:
-                        return False
-                    d[value] = 1
+            if (row_id) % 3 == 0 and (column_id) % 3 == 0:
+                d = set()
+                for i in range(3):
+                    for j in range(3):
+                        value = grid[row_id + i][column_id + j]
+                        if value != 0 and value in d:
+                            return False
+                        d.add(value)
 
     return True
 

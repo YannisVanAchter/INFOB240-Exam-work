@@ -70,8 +70,11 @@ def get_input(grid, size) -> (dict[str, int]):
                             "column": column - 1, # as above
                             "value": value,
                         }
-            print(f"Row: {row}\nColumn: {column}\nValue: {value}\nWas not accepted, check it is include between 0 and {size}.")
+            print(f"Row: {row}\nColumn: {column}\nValue: {value}\nWas not accepted, check it is include between 1 and {size}.")
         except Exception as e:
+            if isinstance(e, KeyboardInterrupt):
+                raise e
+            
             print("Make sure you enter some integers following the syntax expected.")
 
 def main():
@@ -97,7 +100,7 @@ def main():
         while to_find > 0:
             user_i: dict = get_input(grid, size)
             try_s = try_solution(grid, user_i["row"], user_i["column"], user_i["value"])
-            if try_s == False:
+            if try_s is False:
                 print("This place is imposible, you could not finish the sudoku")
             else:
                 print("Great, you are on an good way")
@@ -108,7 +111,7 @@ def main():
             
         # quit condition 
         quit: str = get_string("Do you want quit the game ?\n(Y/N) ")
-        if quit != None and quit.lower().startswith(("y", "q")):
+        if quit is not None and quit.lower().startswith(("y", "q")):
             run = False
             
     print("Hope you enjoyed the game and to see you soon 😉")

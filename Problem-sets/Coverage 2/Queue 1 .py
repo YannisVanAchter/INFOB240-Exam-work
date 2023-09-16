@@ -74,6 +74,8 @@ def test():
     value_1 = 10
     value_2 = 11
     value_3 = 12
+    
+    # basic test
     q = Queue(2)
     assert isinstance(q, Queue)
     q.checkRep()
@@ -82,6 +84,7 @@ def test():
     assert None == q.dequeue()
     q.checkRep()
     
+    # test enqueue
     success = q.enqueue(value_1)
     assert success == True
     assert q.size == 1
@@ -89,17 +92,18 @@ def test():
     assert not q.full()
     q.checkRep()
     
+    # test full
     success = q.enqueue(value_2)
     assert success
     assert q.full()
     success = q.enqueue(value_3)
     assert not success
     
+    # test dequeue
     r = q.dequeue()
     assert r == value_1
     r = q.dequeue()
     assert r == value_2
-
 
     print ("All test passed")
 
